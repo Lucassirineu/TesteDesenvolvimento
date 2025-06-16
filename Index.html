@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurante</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url("img/Img_fundo_site.jpg") no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 10px;
+            width: 250px;
+            text-align: center;
+            box-sizing: border-box;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .card img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .card h3 {
+            margin: 8px 0 4px;
+        }
+
+        .card p {
+            margin: 4px 0;
+        }
+
+        .card button {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background-color: #ff9800;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .card button:hover {
+            background-color: #e68900;
+        }
+
+        #carrinho {
+            background-color: white;
+            margin: 20px auto;
+            padding: 16px;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #carrinho h2 {
+            margin-top: 0;
+        }
+
+        #carrinho button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #carrinho ul {
+            padding-left: 0;
+            list-style: none;
+        }
+
+        #carrinho li {
+            margin: 6px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #carrinho li button {
+            background-color: red;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="teste-container"></div>
+
+    <div id="carrinho">
+        <h2>Carrinho</h2>
+        <ul id="lista-carrinho"></ul>
+        <p id="total">Total: R$ 0.00</p>
+        <button onclick="finalizarCompra()">Finalizar Compra</button>
+    </div>
+
+    <script>
+        const precosProdutos = {
+            "Hambúrguer": 15,
+            "X-Búrguer": 18,
+            "X-Bacon": 18,
+            "X-Tudo": 20,
+            "X-Salada": 15,
+            "Coca-cola350": 6,
+            "Coca-cola600": 9
+        };
+
+        const carrinho = [];
+        let total = 0;
+
+        function carregar() {
+            fetch('dbTeste.json')
+                .then(response => response.json())
+                .then(dbTeste => {
+                    const container = document.querySelector("#teste-container");
+
+                    dbTeste.forEach(teste => {
+                        const card = document.createElement("div");
+                        card.classList.add("card");
+
+                        const img = document.createElement("img");
+                        img.src = teste.imagem;
+                        img.alt = teste.nome;
+
+                        const titulo = document.createElement("h3");
+                        titulo.textContent = teste.nome;
+
+                        const preco = precosProdutos[teste.nome] || 0;
+
+                        const precoTexto = document.createElement("p");
+                        precoTexto.textContent = `Preço: R$ ${preco.toFixed(2)}`;
+
+                        const botao = document.createElement("button");
+                        botao.textContent = "Adicionar ao Carrinho";
+                        botao.onclick = () => adicionarAoCarrinho(teste.nome, preco);
+
+                        card.appendChild(img);
+                        card.appendChild(titulo);
+                        card.appendChild(precoTexto);
+                        card.appendChild(botao);
+                        container.appendChild(card);
+                    });
+                });
+        }
+
+        function adicionarAoCarrinho(nome, preco) {
+            carrinho.push({ nome, preco });
+            total += preco;
+            renderizarCarrinho();
+        }
+
+        function removerDoCarrinho(index) {
+            total -= carrinho[index].preco;
+            carrinho.splice(index, 1);
+            renderizarCarrinho();
+        }
+
+        function renderizarCarrinho() {
+            const lista = document.getElementById("lista-carrinho");
+            lista.innerHTML = "";
+
+            carrinho.forEach((item, index) => {
+                const li = document.createElement("li");
+                li.textContent = `${item.nome} - R$ ${item.preco.toFixed(2)}`;
+
+                const botaoRemover = document.createElement("button");
+                botaoRemover.textContent = "Remover";
+                botaoRemover.onclick = () => removerDoCarrinho(index);
+
+                li.appendChild(botaoRemover);
+                lista.appendChild(li);
+            });
+
+            document.getElementById("total").textContent = `Total: R$ ${total.toFixed(2)}`;
+        }
+
+        function finalizarCompra() {
+            if (carrinho.length === 0) {
+                alert("Seu carrinho está vazio!");
+                return;
+            }
+
+            let resumo = "Itens no carrinho:\n";
+            carrinho.forEach(item => {
+                resumo += `- ${item.nome} - R$ ${item.preco.toFixed(2)}\n`;
+            });
+            resumo += `\nTotal: R$ ${total.toFixed(2)}`;
+
+            alert(resumo);
+
+            carrinho.length = 0;
+            total = 0;
+            renderizarCarrinho();
+        }
+
+        carregar();
+    </script>
+
+</body>
+
+</html>

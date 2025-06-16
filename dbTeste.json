@@ -1,0 +1,30 @@
+[
+    {
+        "nome": "Hambúrguer",
+        "imagem": "img/hamburguer.jpg"
+    },
+    {
+        "nome": "X-Búrguer",
+        "imagem": "img/x-burguer.jpg"
+    },
+    {
+        "nome": "X-Bacon",
+        "imagem": "img/x-bacon.jpg"
+    },
+    {
+        "nome": "X-Tudo",
+        "imagem": "img/x-tudo.jpg"
+    },
+    {
+        "nome": "X-Salada",
+        "imagem": "img/x-salada.jpg"
+    },
+    {
+        "nome": "Coca-cola350",
+        "imagem": "img/coca-cola350.jpg"
+    },
+    {
+        "nome": "Coca-cola600",
+        "imagem": "img/coca-cola600.jpg"
+    }
+]
